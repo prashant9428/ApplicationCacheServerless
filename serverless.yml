@@ -1,0 +1,72 @@
+service: ApplicationCacheInLambda
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-log-retention
+  - serverless-prune-plugin
+  - serverless-plugin-warmup
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ap-south-1
+  profile: default
+  timeout: 29
+  memorySize: 128
+  endpointType: 
+  logRetentionInDays: ${self:custom.myEnvironment.RETENTION.${self:provider.stage}}
+  versionFunction: false
+  stage: ${opt:stage, 'dev'}
+  environment: ${file(./config/${self:provider.stage}.yml)}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "*"
+  httpApi:
+    payload: "2.0"
+    cors:
+      allowedOrigins:
+        - "*"
+      allowedHeaders:
+        - Content-Type
+        - X-Amz-Date
+        - Authorization
+        - X-Api-Key
+        - X-Amz-Security-Token
+        - X-Amz-User-Agent
+        - X-Transaction-Key
+        - Access-Control-Allow-Origin
+        - store_id
+        - os_type
+        - version
+  vpc:
+
+custom:
+  prune:
+    automatic: true
+    number: ${self:custom.myEnvironment.PRUNE.${self:provider.stage}}
+
+  warmup:
+    default:
+      enabled: "prod"
+
+  myEnvironment:
+    RETENTION:
+      dev: 1
+      qa: 1
+      prod: 1
+    PRUNE:
+      dev: 1
+      qa: 1
+      prod: 1
+
+functions:
+  getMonth:
+    handler: handler.getMonth
+    description: "random month api"
+    events:
+      - httpApi:
+          method: GET
+          path: /v1/getMonth
+ 
