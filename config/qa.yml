@@ -1,5 +1,6 @@
-REDIS_PRIMARY_SERVER: "token.wbkkkf.ng.0001.aps1.cache.amazonaws.com"
-REDIS_READER_SERVER: "token-ro.wbkkkf.ng.0001.aps1.cache.amazonaws.com"
+REDIS_PRIMARY_SERVER: ""
+REDIS_READER_SERVER: ""
 
 REDIS_PORT: 6379
 USE_REDIS: "true"
+
